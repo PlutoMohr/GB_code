@@ -713,7 +713,10 @@ def Write_to_io(axis, m, n, basis):
     It also contains the output from the usage of csl_generator.py.
     """
 
-    my_dict = {'GB_plane': str([axis[0], axis[1], axis[2]]),
+    # Ensure values are written as plain Python ints (not numpy types)
+    gb_plane_str = '[{}, {}, {}]'.format(int(axis[0]), int(axis[1]),
+                                          int(axis[2]))
+    my_dict = {'GB_plane': gb_plane_str,
                'lattice_parameter': '4',
                'overlap_distance': '0.0', 'which_g': 'g1',
                'rigid_trans': 'no', 'a': '10', 'b': '5',
@@ -766,7 +769,9 @@ def Write_to_io(axis, m, n, basis):
                 '\n\n\n')
         f.write('# The following is your csl_generator output.'
                 ' YOU DO NOT NEED TO CHANGE THEM! \n\n')
-        f.write('axis'+': ' + str([axis[0], axis[1], axis[2]]) + '\n')
+        f.write('axis' + ': ' + '[{}, {}, {}]'.format(int(axis[0]),
+                                 int(axis[1]),
+                                 int(axis[2])) + '\n')
         f.write('m' + ': ' + str(m) + '\n')
         f.write('n' + ': ' + str(n) + '\n')
         f.write('basis' + ': ' + str(basis) + '\n')
