@@ -717,7 +717,7 @@ def Write_to_io(axis, m, n, basis):
     gb_plane_str = '[{}, {}, {}]'.format(int(axis[0]), int(axis[1]),
                                           int(axis[2]))
     my_dict = {'GB_plane': gb_plane_str,
-               'lattice_parameter': '4',
+               'lattice_parameter': '3.63903',
                'overlap_distance': '0.0', 'which_g': 'g1',
                'rigid_trans': 'no', 'a': '10', 'b': '5',
                'dimensions': '[1,1,1]',

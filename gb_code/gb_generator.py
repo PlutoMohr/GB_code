@@ -411,6 +411,7 @@ class GB_character:
             f.write('{0:.8f} 0.0 0.0 \n'.format(LenX))
             f.write('0.0 {0:.8f} 0.0 \n'.format(LenY))
             f.write('0.0 0.0 {0:.8f} \n'.format(LenZ))
+            f.write('Cu Cu \n')
             f.write('{} {} \n'.format(len(X), len(Y)))
             f.write('Cartesian\n')
             np.savetxt(f, Wf, fmt='%.8f %.8f %.8f')

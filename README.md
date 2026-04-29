@@ -1,22 +1,28 @@
 # GB_code [![DOI](http://joss.theoj.org/papers/10.21105/joss.00900/status.svg)](https://doi.org/10.21105/joss.00900) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1433531.svg)](https://doi.org/10.5281/zenodo.1433531)
+
 This python package helps you create orthogonal grain boundary supercells for atomistic calculations. The code is based on the coincident site lattice (CSL) formulations for cubic materials (sc, bcc, fcc, diamond). I intend to extend it to hcp structures soon. The code produces a final structure to be read in [LAMMPS](https://lammps.sandia.gov/) or [VASP](https://www.vasp.at/).  
-It has been designed to be simple to use and instructive with a special attention to GB plane orientation which is often lacking in other grain boundary creation codes. For more details please read the [paper](https://doi.org/10.21105/joss.00900).     
+It has been designed to be simple to use and instructive with a special attention to GB plane orientation which is often lacking in other grain boundary creation codes. For more details please read the [paper](https://doi.org/10.21105/joss.00900).
 
 # Overview
+
 There are two main scripts: [_csl_generator.py_](./csl_generator.py) and [_gb_generator.py_](./csl_generator.py) which you need to use in this order to produce the final grain boundary (GB) structure. These scripts are both modules (a collection of functions/classes) and can be executed
 from the command line.
 In this README I will explain the steps to use the code in the Terminal and I have also attached two _jupyter notebooks_ ([Usage_of_GB_code.ipynb](./Usage_of_GB_code.ipynb), [Dichromatic_pattern_CSL.ipynb](./Dichromatic_pattern_CSL.ipynb)) in the [Test](./Test) directory which describe how the code can be accessed and used in the notebooks by various examples. These notebooks have extra functionality. The former is for the general usage of the code with some tips to locate GBs of interest, the latter depicts how CSL construction can be used for different purposes.
-You can use [this link](https://mybinder.org/v2/gh/oekosheri/GB_code/master) or [![Binder](https://mybinder.org/badge.svg)](https://mybinder.org/v2/gh/oekosheri/GB_code/master) for an interactive Jupyter notebook environment provided by Binder. 
+You can use [this link](https://mybinder.org/v2/gh/oekosheri/GB_code/master) or [![Binder](https://mybinder.org/badge.svg)](https://mybinder.org/v2/gh/oekosheri/GB_code/master) for an interactive Jupyter notebook environment provided by Binder.
 To use it locally, you will need `python> 3.5.1` and `numpy > 1.14` for the main scripts and additionally matplotlib and pandas to use the auxilliary Jupyter notebooks.
 
 # Installation guide
+
 For installation simply clone or download the code in your terminal and in the main directory of the package type:
+
 ```
 > pip install .
 ```
+
 This will copy the modules to your active python site-packages, thereby making them importable in any python script and will put the scrpits in the python bin, thereby making them executable in the shell.
 
 # Usage
+
 To pick a grain boundary 5 degrees of freedom need to be fixed: rotation axis, rotation angle and GB plane orientation.
 We start by choosing only an axis, say a low index [1, 1, 1] and list the possibilities for the angle (sigma). Once you pick
 these and additionally a basis, a CSL minimal cell will be created and you can see a list of possible GB plane orientations within
@@ -51,6 +57,7 @@ Sigma:    49  Theta:  43.57
 
  Choose a basis, pick a sigma and use the second mode!
 ```
+
 Once you pick one of these angles (sigma boundaries) you should use the second mode, decide on a basis, for ex: diamond, and list the GB planes of interest:
 
 _Second mode:
@@ -78,6 +85,7 @@ _Second mode:
 [ 1  3 -4]             [-1  4 -3]             Symmetric Tilt         1248
 ...
 ```
+
 Which you can write to a file if you wish.
 
 Your chosen axis, basis and sigma will be written to an io_file (a yaml file) which will be read by gb_generator.py.
@@ -124,6 +132,7 @@ m: 7
 n: 1
 basis: diamond
 ```
+
 - GB_plane: must be chosen from the list that was provided after running the second mode of csl_generator.py. Here for ex: [2,  1, -2].
 Change the default plane to your chosen one.
 - lattice_parameter: is self-explanatory.
@@ -137,7 +146,7 @@ To minimize the grain boundary energy, microscopic degrees of freedom must be ta
 
 (2) will be achieved by
 
--  rigid_trans: yes or no. If no, the following a and b will be disregarded. For any grain boundary type except the twist boundary, the smallest inplane unit that must be scanned comprises the unitcell formed by the smallest orthogonal CSL vectors on the GB plane. These vectors will be divided by the following a and b integers to produce a grid upon which the boundary will be translated. Here a is used for the larger inplane vector and b for the smaller one. So by defalut I produce _5 * 10 = 50_ initial structures to be minimized for finding the lowest energy structure. The higher your chosen a and b, the denser the grid.
+- rigid_trans: yes or no. If no, the following a and b will be disregarded. For any grain boundary type except the twist boundary, the smallest inplane unit that must be scanned comprises the unitcell formed by the smallest orthogonal CSL vectors on the GB plane. These vectors will be divided by the following a and b integers to produce a grid upon which the boundary will be translated. Here a is used for the larger inplane vector and b for the smaller one. So by defalut I produce _5 * 10 = 50_ initial structures to be minimized for finding the lowest energy structure. The higher your chosen a and b, the denser the grid.
 For the twist grain boundary the smallest unit that needs to be scanned is the unitcell created by the DSC vectors (the smallest repeat vectors of the CSL) and the code will handle it internally.
 - a: 10
 - b: 5
@@ -150,11 +159,13 @@ You can choose a combination of atom removal and rigid body translation for find
 
 As an example, we change the default gb_plane to [2,  1, -2], overlap_distance to 0.3 and rigid_trans to 'yes' in the io_file.
 To produce the GB of interest we go on with: [_gb_generator.py_](./gb_generator.py)
+
 ```
 > gb_generator.py io_file
 <<------ 32 atoms are being removed! ------>>
 <<------ 50 GB structures are being created! ------>>
 ```
+
 The following is one of these 50 GBs visualized by [Ovito](https://ovito.org/index.php/download):
 The color code distinguishes the diamond bulk structure as blue. The color changes gradually to green as we approach the GB atoms. In the middle lies the central GB and on both up and bottom of the cell you have halves of an equivalent GB (the periodic image).
 
@@ -174,15 +185,20 @@ I often do a three stage minimization at 0K followed by an MD annealing simulati
 The 0K miminimization is composed of: A conjugate gradient minimization of the energy of atoms, the simulation box and then atoms again;
 similar to a procedure explained [here](https://icme.hpc.msstate.edu/mediawiki/index.php/LAMMPS_Input_Deck_for_Grain_boundary_generation).
 For the annealing simulations I use an _nvt_ ensemble followed by damped dynamics. Depending on the GB structure and your final purpose you can run annealing simulations for different time spans.
+
 # Questions/Contributions
+
 If you have any questions, raise an issue or contact [me](mailto:shahrzadhadian@gmail.com).
-This project is currently under development and at the moment I am not accepting contributions from other users. 
+This project is currently under development and at the moment I am not accepting contributions from other users.
 Should this change in the future I'll provide detailed information on how to contribute to the project.
 
 # Citation
+
 Feel free to use the code anyway you like, if you find it useful please cite the paper:
+
 - Hadian et al., (2018). GB code: A grain boundary generation code. Journal of Open Source Software, 3(29), 900  [https://doi.org/10.21105/joss.00900](https://doi.org/10.21105/joss.00900)
 [![DOI](http://joss.theoj.org/papers/10.21105/joss.00900/status.svg)](https://doi.org/10.21105/joss.00900)
 
 # License
+
 [MIT](./LICENSE).  
